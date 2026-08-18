@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Wake Up Ticker — Settings</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="titlebar" data-tauri-drag-region></header>
+
+    <main>
+      <section class="status" id="status">
+        <p class="status-eyebrow" id="status-eyebrow">Next reminder</p>
+        <p class="status-time" id="status-time">--:--</p>
+        <p class="status-detail" id="status-detail">Loading…</p>
+
+        <div class="status-actions">
+          <button type="button" id="btn-test" class="btn">Remind me now</button>
+          <button type="button" id="btn-toggle" class="btn">Pause</button>
+        </div>
+
+        <div class="snooze-row" id="snooze-row">
+          <span class="snooze-label">Snooze</span>
+          <div class="snooze-buttons" id="snooze-buttons"></div>
+        </div>
+
+        <button type="button" id="btn-cancel-snooze" class="btn btn-link hidden">
+          Cancel snooze
+        </button>
+      </section>
+
+      <section class="card">
+        <h2>Schedule</h2>
+        <p class="hint">Reminders fire at these minutes past every hour.</p>
+
+        <div class="presets" id="presets">
+          <button type="button" class="chip" data-minutes="50">Once an hour · :50</button>
+          <button type="button" class="chip" data-minutes="20,50">Twice an hour · :20 :50</button>
+          <button type="button" class="chip" data-minutes="0,30">Every 30 min · :00 :30</button>
+          <button type="button" class="chip" data-minutes="0,15,30,45">Every 15 min</button>
+        </div>
+
+        <label class="field">
+          <span class="field-label">Minutes past the hour</span>
+          <input
+            type="text"
+            id="minutes"
+            inputmode="numeric"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="20, 50"
+          />
+        </label>
+        <p class="error hidden" id="minutes-error"></p>
+        <p class="hint" id="minutes-preview"></p>
+      </section>
+
+      <section class="card">
+        <h2>Notification</h2>
+
+        <label class="field">
+          <span class="field-label">Title</span>
+          <input type="text" id="title" maxlength="120" autocomplete="off" />
+        </label>
+
+        <label class="field">
+          <span class="field-label">Message</span>
+          <textarea id="body" rows="2" maxlength="300"></textarea>
+        </label>
+
+        <label class="toggle">
+          <input type="checkbox" id="sound" />
+          <span>Play a sound</span>
+        </label>
+
+        <label class="field field-inline">
+          <span class="field-label">Default snooze</span>
+          <span class="field-suffix">
+            <input type="number" id="snoozeMinutes" min="1" max="1440" step="5" />
+            <span class="unit">minutes</span>
+          </span>
+        </label>
+      </section>
+
+      <section class="card">
+        <h2>When to remind</h2>
+
+        <label class="toggle">
+          <input type="checkbox" id="weekdaysOnly" />
+          <span>Weekdays only</span>
+        </label>
+
+        <label class="toggle">
+          <input type="checkbox" id="quietEnabled" />
+          <span>Stay quiet overnight</span>
+        </label>
+
+        <div class="field-row" id="quiet-range">
+          <label class="field">
+            <span class="field-label">From</span>
+            <input type="time" id="quietFrom" />
+          </label>
+          <label class="field">
+            <span class="field-label">To</span>
+            <input type="time" id="quietTo" />
+          </label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>System</h2>
+
+        <label class="toggle">
+          <input type="checkbox" id="autoStart" />
+          <span>Start automatically when I log in</span>
+        </label>
+
+        <label class="toggle" id="menubar-toggle">
+          <input type="checkbox" id="showTimeInMenuBar" />
+          <span>Show the next time in the menu bar</span>
+        </label>
+      </section>
+
+      <footer class="footer">
+        <span id="version"></span>
+        <button type="button" id="btn-reveal" class="btn btn-link">Show config file</button>
+        <button type="button" id="btn-quit" class="btn btn-link btn-danger">Quit app</button>
+      </footer>
+    </main>
+
+    <div class="saved-toast" id="saved-toast">Saved</div>
+
+    <script src="main.js"></script>
+  </body>
+</html>

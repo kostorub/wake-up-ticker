@@ -1,0 +1,15 @@
+{
+  "name": "wake-up-ticker",
+  "version": "1.0.0",
+  "description": "Tray reminder that nudges you to stand up and move at configurable minutes past every hour.",
+  "private": true,
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "tauri": "tauri",
+    "icons": "node scripts/generate-icons.js && tauri icon assets/icon.png --output src-tauri/icons"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.1.0"
+  }
+}
