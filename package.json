@@ -7,7 +7,7 @@
     "dev": "tauri dev",
     "build": "tauri build",
     "tauri": "tauri",
-    "icons": "node scripts/generate-icons.js && tauri icon assets/icon.png --output src-tauri/icons"
+    "icons": "node scripts/generate-icons.js && tauri icon assets/icon.png --output src-tauri/icons && rm -rf src-tauri/icons/ios src-tauri/icons/android"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.1.0"
