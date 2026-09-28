@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>Wake Up Ticker — Settings</title>
+    <link rel="stylesheet" href="tokens.css" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -93,16 +94,11 @@
 
         <div id="overlay-options">
           <label class="field field-inline">
-            <span class="field-label">Break length</span>
+            <span class="field-label">Timer</span>
             <span class="field-suffix">
               <input type="number" id="overlaySeconds" min="5" max="900" step="5" />
               <span class="unit">seconds</span>
             </span>
-          </label>
-
-          <label class="toggle">
-            <input type="checkbox" id="overlayAllowSkip" />
-            <span>Show a Skip button</span>
           </label>
 
           <button type="button" id="btn-preview" class="btn">Preview the break screen</button>

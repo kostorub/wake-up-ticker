@@ -45,8 +45,6 @@ pub struct Config {
     pub overlay: bool,
     /// How long the break window stays up, in seconds.
     pub overlay_seconds: u32,
-    /// Whether the break window offers a "Skip" button as well as a snooze.
-    pub overlay_allow_skip: bool,
     /// Internal: whether the settings window has been shown at least once.
     pub has_launched: bool,
 }
@@ -66,7 +64,6 @@ impl Default for Config {
             show_time_in_menu_bar: false,
             overlay: true,
             overlay_seconds: 60,
-            overlay_allow_skip: true,
             has_launched: false,
         }
     }

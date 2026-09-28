@@ -8,8 +8,8 @@ a browser.
 - Fires at any minutes past the hour — `:50`, or `:20` and `:50`, or a custom
   list like `7, 23, 41`. Presets cover once/twice an hour and every 15 or 30 min.
 - **Takes over every screen** when a reminder fires — a full-screen break
-  window above full-screen apps, the Dock and the menu bar, with a countdown
-  and a stretch to try. Turn it off for notifications only.
+  window above full-screen apps, the Dock and the menu bar, showing a
+  countdown and nothing else. Turn it off for notifications only.
 - Snooze 15 / 30 / 60 / 120 minutes, or skip just the next reminder.
 - Optional quiet hours (may wrap past midnight) and a weekdays-only filter.
 - Starts at login, on by default. No Dock icon on macOS.
@@ -56,11 +56,16 @@ On macOS the overlay sits at the screen-saver window level and joins all Spaces,
 so it covers full-screen apps rather than hiding behind them. One window opens
 per monitor.
 
-It always ends, three independent ways: the countdown closes it, any of its
-buttons closes it, and **Esc always works** even with the Skip button hidden.
-A Rust-side failsafe force-closes it 15 seconds past the countdown, so a wedged
-webview can never strand a window over every screen. Break length is clamped to
-between 5 seconds and 15 minutes.
+It shows the reminder title, a countdown ring and a Done button — nothing
+else — and uses the same design tokens as the settings window, so it follows
+light and dark mode with the rest of the app.
+
+It always ends, three independent ways: the countdown closes it, Done closes
+it, and **Esc always works**. Esc is deliberately not printed on screen but is
+always live, because a window covering every display must never be something
+you cannot get out of. A Rust-side failsafe force-closes it 15 seconds past the
+countdown, so a wedged webview cannot strand it. The timer is set in Settings
+and clamped to between 5 seconds and 15 minutes.
 
 ## How scheduling works
 
@@ -74,7 +79,8 @@ skipped rather than fired late.
 ## Layout
 
 ```
-src/                  settings window - plain HTML/CSS/JS, no build step
+src/                  settings window + break overlay - plain HTML/CSS/JS
+  tokens.css          design tokens shared by both windows
 src-tauri/src/
   config.rs           load, validate and atomically save the config
   scheduler.rs        next reminder, quiet hours, weekday filter

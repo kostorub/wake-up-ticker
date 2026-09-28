@@ -35,10 +35,7 @@ pub struct AppState {
 #[serde(rename_all = "camelCase")]
 pub struct OverlayState {
     title: String,
-    body: String,
     seconds: u32,
-    allow_skip: bool,
-    snooze_minutes: u32,
 }
 
 #[derive(Serialize)]
@@ -251,25 +248,13 @@ fn overlay_state(state: State<AppState>) -> OverlayState {
     let runtime = state.runtime.lock().expect("state lock");
     OverlayState {
         title: runtime.config.title.clone(),
-        body: runtime.config.body.clone(),
         seconds: runtime.config.overlay_seconds,
-        allow_skip: runtime.config.overlay_allow_skip,
-        snooze_minutes: runtime.config.snooze_minutes,
     }
 }
 
-/// `action` is "done", "snooze" or "skip" — all three close the break window.
 #[tauri::command]
-fn dismiss_overlay(app: AppHandle, action: String) {
+fn dismiss_overlay(app: AppHandle) {
     overlay::hide(&app);
-    if action == "snooze" {
-        let minutes = {
-            let state = app.state::<AppState>();
-            let runtime = state.runtime.lock().expect("state lock");
-            runtime.config.snooze_minutes
-        };
-        snooze_for(&app, minutes);
-    }
 }
 
 #[tauri::command]

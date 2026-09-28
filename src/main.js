@@ -33,7 +33,6 @@ const dom = {
   overlay: el('overlay'),
   overlayOptions: el('overlay-options'),
   overlaySeconds: el('overlaySeconds'),
-  overlayAllowSkip: el('overlayAllowSkip'),
   btnPreview: el('btn-preview'),
   menubarToggle: el('menubar-toggle'),
   version: el('version'),
@@ -151,7 +150,6 @@ function renderConfig(next) {
   dom.showTimeInMenuBar.checked = next.showTimeInMenuBar;
   dom.overlay.checked = next.overlay;
   dom.overlaySeconds.value = next.overlaySeconds;
-  dom.overlayAllowSkip.checked = next.overlayAllowSkip;
   dom.overlayOptions.classList.toggle('disabled', !next.overlay);
   renderPresets(next.minutes);
   suppressEvents = false;
@@ -260,9 +258,6 @@ function bind() {
     const value = Number.parseInt(dom.overlaySeconds.value, 10);
     save({ overlaySeconds: Number.isInteger(value) ? value : config.overlaySeconds });
   });
-  dom.overlayAllowSkip.addEventListener('change', () =>
-    save({ overlayAllowSkip: dom.overlayAllowSkip.checked }),
-  );
   dom.btnPreview.addEventListener('click', () => invoke('preview_overlay'));
 
   dom.btnReveal.addEventListener('click', () => invoke('reveal_config'));
