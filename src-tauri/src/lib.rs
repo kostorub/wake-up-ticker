@@ -1,4 +1,5 @@
 mod config;
+mod overlay;
 mod scheduler;
 mod tray;
 
@@ -28,6 +29,16 @@ pub struct Runtime {
 pub struct AppState {
     pub runtime: Mutex<Runtime>,
     pub config_path: PathBuf,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OverlayState {
+    title: String,
+    body: String,
+    seconds: u32,
+    allow_skip: bool,
+    snooze_minutes: u32,
 }
 
 #[derive(Serialize)]
@@ -86,6 +97,10 @@ pub fn fire_reminder(app: &AppHandle) {
         runtime.config.clone()
     };
     notify(app, &config);
+    if config.overlay {
+        overlay::show(app);
+        overlay::arm_failsafe(app, &config);
+    }
     refresh(app);
 }
 
@@ -232,6 +247,43 @@ fn reveal_config(app: AppHandle, state: State<AppState>) {
 }
 
 #[tauri::command]
+fn overlay_state(state: State<AppState>) -> OverlayState {
+    let runtime = state.runtime.lock().expect("state lock");
+    OverlayState {
+        title: runtime.config.title.clone(),
+        body: runtime.config.body.clone(),
+        seconds: runtime.config.overlay_seconds,
+        allow_skip: runtime.config.overlay_allow_skip,
+        snooze_minutes: runtime.config.snooze_minutes,
+    }
+}
+
+/// `action` is "done", "snooze" or "skip" — all three close the break window.
+#[tauri::command]
+fn dismiss_overlay(app: AppHandle, action: String) {
+    overlay::hide(&app);
+    if action == "snooze" {
+        let minutes = {
+            let state = app.state::<AppState>();
+            let runtime = state.runtime.lock().expect("state lock");
+            runtime.config.snooze_minutes
+        };
+        snooze_for(&app, minutes);
+    }
+}
+
+#[tauri::command]
+fn preview_overlay(app: AppHandle) {
+    let config = {
+        let state = app.state::<AppState>();
+        let runtime = state.runtime.lock().expect("state lock");
+        runtime.config.clone()
+    };
+    overlay::show(&app);
+    overlay::arm_failsafe(&app, &config);
+}
+
+#[tauri::command]
 fn quit_app(app: AppHandle) {
     app.exit(0);
 }
@@ -306,6 +358,9 @@ pub fn run() {
             clear_snooze,
             test_notification,
             reveal_config,
+            overlay_state,
+            dismiss_overlay,
+            preview_overlay,
             quit_app,
         ])
         .setup(|app| {
@@ -354,10 +409,13 @@ pub fn run() {
             Ok(())
         })
         .on_window_event(|window, event| {
-            // Closing the settings window keeps the app alive in the tray.
+            // Closing the settings window keeps the app alive in the tray, but
+            // break windows are genuinely destroyed.
             if let tauri::WindowEvent::CloseRequested { api, .. } = event {
-                api.prevent_close();
-                let _ = window.hide();
+                if window.label() == "main" {
+                    api.prevent_close();
+                    let _ = window.hide();
+                }
             }
         })
         .build(tauri::generate_context!())

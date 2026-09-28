@@ -41,6 +41,12 @@ pub struct Config {
     pub quiet_hours: QuietHours,
     /// macOS only: print the countdown next to the menu bar icon.
     pub show_time_in_menu_bar: bool,
+    /// Take over every screen with a full-screen break window when a reminder fires.
+    pub overlay: bool,
+    /// How long the break window stays up, in seconds.
+    pub overlay_seconds: u32,
+    /// Whether the break window offers a "Skip" button as well as a snooze.
+    pub overlay_allow_skip: bool,
     /// Internal: whether the settings window has been shown at least once.
     pub has_launched: bool,
 }
@@ -58,6 +64,9 @@ impl Default for Config {
             weekdays_only: false,
             quiet_hours: QuietHours::default(),
             show_time_in_menu_bar: false,
+            overlay: true,
+            overlay_seconds: 60,
+            overlay_allow_skip: true,
             has_launched: false,
         }
     }
@@ -100,6 +109,8 @@ impl Config {
         self.title = clean_text(&self.title, &defaults.title, MAX_TITLE);
         self.body = clean_text(&self.body, &defaults.body, MAX_BODY);
         self.snooze_minutes = self.snooze_minutes.clamp(1, 24 * 60);
+        // A break shorter than 5s is not a break; longer than 15 min is a trap.
+        self.overlay_seconds = self.overlay_seconds.clamp(5, 15 * 60);
 
         if !is_time_string(&self.quiet_hours.from) {
             self.quiet_hours.from = defaults.quiet_hours.from.clone();
@@ -191,6 +202,14 @@ mod tests {
         assert_eq!(config.snooze_minutes, 1);
         let config = Config { snooze_minutes: 99_999, ..Default::default() }.sanitized();
         assert_eq!(config.snooze_minutes, 1440);
+    }
+
+    #[test]
+    fn clamps_overlay_seconds() {
+        let config = Config { overlay_seconds: 0, ..Default::default() }.sanitized();
+        assert_eq!(config.overlay_seconds, 5);
+        let config = Config { overlay_seconds: 99_999, ..Default::default() }.sanitized();
+        assert_eq!(config.overlay_seconds, 900);
     }
 
     #[test]

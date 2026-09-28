@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Time to move</title>
+    <link rel="stylesheet" href="overlay.css" />
+  </head>
+  <body>
+    <main class="break">
+      <p class="eyebrow">Wake Up Ticker</p>
+      <h1 id="title">Time to stand up</h1>
+      <p class="body" id="body"></p>
+
+      <div class="ring">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle class="ring-track" cx="60" cy="60" r="54" />
+          <circle class="ring-progress" id="ring" cx="60" cy="60" r="54" />
+        </svg>
+        <span class="ring-value" id="countdown">60</span>
+      </div>
+
+      <p class="suggestion" id="suggestion"></p>
+
+      <div class="actions">
+        <button type="button" id="btn-done" class="btn btn-primary">I'm up — done</button>
+        <button type="button" id="btn-snooze" class="btn">Snooze</button>
+        <button type="button" id="btn-skip" class="btn btn-quiet hidden">Skip</button>
+      </div>
+
+      <p class="hint">Press <kbd>Esc</kbd> to dismiss</p>
+    </main>
+
+    <script src="overlay.js"></script>
+  </body>
+</html>

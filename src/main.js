@@ -30,6 +30,11 @@ const dom = {
   quietTo: el('quietTo'),
   autoStart: el('autoStart'),
   showTimeInMenuBar: el('showTimeInMenuBar'),
+  overlay: el('overlay'),
+  overlayOptions: el('overlay-options'),
+  overlaySeconds: el('overlaySeconds'),
+  overlayAllowSkip: el('overlayAllowSkip'),
+  btnPreview: el('btn-preview'),
   menubarToggle: el('menubar-toggle'),
   version: el('version'),
   btnReveal: el('btn-reveal'),
@@ -144,6 +149,10 @@ function renderConfig(next) {
   dom.quietRange.classList.toggle('disabled', !next.quietHours.enabled);
   dom.autoStart.checked = next.autoStart;
   dom.showTimeInMenuBar.checked = next.showTimeInMenuBar;
+  dom.overlay.checked = next.overlay;
+  dom.overlaySeconds.value = next.overlaySeconds;
+  dom.overlayAllowSkip.checked = next.overlayAllowSkip;
+  dom.overlayOptions.classList.toggle('disabled', !next.overlay);
   renderPresets(next.minutes);
   suppressEvents = false;
 }
@@ -242,6 +251,19 @@ function bind() {
   });
   dom.quietFrom.addEventListener('change', saveQuiet);
   dom.quietTo.addEventListener('change', saveQuiet);
+
+  dom.overlay.addEventListener('change', () => {
+    dom.overlayOptions.classList.toggle('disabled', !dom.overlay.checked);
+    save({ overlay: dom.overlay.checked });
+  });
+  dom.overlaySeconds.addEventListener('change', () => {
+    const value = Number.parseInt(dom.overlaySeconds.value, 10);
+    save({ overlaySeconds: Number.isInteger(value) ? value : config.overlaySeconds });
+  });
+  dom.overlayAllowSkip.addEventListener('change', () =>
+    save({ overlayAllowSkip: dom.overlayAllowSkip.checked }),
+  );
+  dom.btnPreview.addEventListener('click', () => invoke('preview_overlay'));
 
   dom.btnReveal.addEventListener('click', () => invoke('reveal_config'));
   dom.btnQuit.addEventListener('click', () => invoke('quit_app'));

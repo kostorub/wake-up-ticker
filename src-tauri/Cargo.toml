@@ -23,6 +23,11 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 chrono = "0.4"
 
+# Used only to raise the break overlay above full-screen apps and the menu bar.
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2-app-kit = "0.3"
+objc2-foundation = "0.3"
+
 [profile.release]
 opt-level = "s"
 lto = true

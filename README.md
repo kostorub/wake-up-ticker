@@ -7,6 +7,9 @@ a browser.
 
 - Fires at any minutes past the hour — `:50`, or `:20` and `:50`, or a custom
   list like `7, 23, 41`. Presets cover once/twice an hour and every 15 or 30 min.
+- **Takes over every screen** when a reminder fires — a full-screen break
+  window above full-screen apps, the Dock and the menu bar, with a countdown
+  and a stretch to try. Turn it off for notifications only.
 - Snooze 15 / 30 / 60 / 120 minutes, or skip just the next reminder.
 - Optional quiet hours (may wrap past midnight) and a weekdays-only filter.
 - Starts at login, on by default. No Dock icon on macOS.
@@ -46,6 +49,18 @@ lives in the platform config dir under `com.kostorub.wakeupticker`:
 Invalid values are corrected on load rather than rejected, so hand-editing is
 safe: out-of-range minutes are dropped, blank text falls back to defaults, and
 malformed times revert.
+
+## The break window
+
+On macOS the overlay sits at the screen-saver window level and joins all Spaces,
+so it covers full-screen apps rather than hiding behind them. One window opens
+per monitor.
+
+It always ends, three independent ways: the countdown closes it, any of its
+buttons closes it, and **Esc always works** even with the Skip button hidden.
+A Rust-side failsafe force-closes it 15 seconds past the countdown, so a wedged
+webview can never strand a window over every screen. Break length is clamped to
+between 5 seconds and 15 minutes.
 
 ## How scheduling works
 
